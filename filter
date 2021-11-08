@@ -1,0 +1,14 @@
+comm = GetFYDBConnection().OpenCommand("sps_GLValidUserAccounts", dbcCmdStoredProc);
+comm.Parameters.Add(new SqlParameter("@BankAccountID", lBankAccountsID));
+comm.Parameters.Add(new SqlParameter("@UserID",  FixParms(Context.UserId)));
+if (GLCentralSite()) {
+    comm.Parameters.Add(new SqlParameter("@GlCentralSite", 1));
+} else {
+    comm.Parameters.Add(new SqlParameter("@GlCentralSite", value: 0));
+}
+comm.CommandTimeout = 360;
+var dataReader = comm.ExecuteReader();
+var dataTable = new DataTable();
+dataTable.Load(dataReader);
+VBDataTableReader dataTableReader = new VBDataTableReader(dataTable);
+rs = new VBRecordset(dataTableReader);
